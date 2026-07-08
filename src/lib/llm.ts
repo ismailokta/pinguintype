@@ -17,10 +17,17 @@ export type GeneratedSentence = {
   metadata: SentenceMetadata;
 };
 
-const client = new OpenAI({
-  baseURL: process.env.LLM_BASE_URL ?? "https://gemma4.emka.web.id/v1/",
-  apiKey: process.env.LLM_API_KEY ?? "not-needed",
-});
+function getClient() {
+  const baseURL = process.env.LLM_BASE_URL;
+  if (!baseURL) throw new Error("LLM_BASE_URL is not set. Copy .env.example to .env.local and configure it.");
+  return new OpenAI({ baseURL, apiKey: process.env.LLM_API_KEY ?? "not-needed" });
+}
+
+let client: OpenAI | null = null;
+function clientInstance(): OpenAI {
+  if (!client) client = getClient();
+  return client;
+}
 
 let model = process.env.LLM_MODEL ?? "gemma-3-27b-it";
 const formalities: Formality[] = ["formal", "informal", "conversational"];
@@ -70,7 +77,7 @@ async function createCompletion(topicName: string) {
   } catch (error) {
     if ((error as { status?: number }).status !== 404) throw error;
 
-    const fallback = (await client.models.list()).data[0]?.id;
+    const fallback = (await clientInstance().models.list()).data[0]?.id;
     if (!fallback || fallback === model) throw error;
 
     model = fallback;
@@ -79,7 +86,7 @@ async function createCompletion(topicName: string) {
 }
 
 function requestCompletion(topicName: string, selectedModel: string) {
-  return client.chat.completions.create({
+  return clientInstance().chat.completions.create({
     model: selectedModel,
     messages: [
       { role: "system", content: "You output valid JSON only." },

@@ -46,19 +46,20 @@ npm start
 
 ## LLM API
 
-Configure your own OpenAI-compatible endpoint via environment variables:
+Sentence generation uses an OpenAI-compatible API. Configure via environment variables:
 
 ```bash
 cp .env.example .env.local
+# Edit .env.local with your provider details
 ```
 
-| Variable        | Description              | Default                                |
-| --------------- | ------------------------ | -------------------------------------- |
-| `LLM_BASE_URL`  | API base URL             | `https://gemma4.emka.web.id/v1/`       |
-| `LLM_API_KEY`   | API key                  | `not-needed`                           |
-| `LLM_MODEL`     | Model name               | `gemma-3-27b-it`                       |
+| Variable        | Description     |
+| --------------- | --------------- |
+| `LLM_BASE_URL`  | API base URL (required) |
+| `LLM_API_KEY`   | API key (optional) |
+| `LLM_MODEL`     | Model name (optional) |
 
-Works with any OpenAI-compatible provider: OpenAI, Anthropic (via proxy), Groq, local Ollama, etc. Set all three vars and run `npx tsx src/db/seed.ts` to regenerate sentences.
+Works with any OpenAI-compatible provider: OpenAI, Anthropic (via proxy), Groq, local Ollama, etc. The app errors at startup if `LLM_BASE_URL` is missing.
 
 ## Public access (Cloudflare Tunnel)
 
