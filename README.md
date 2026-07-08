@@ -1,20 +1,21 @@
 # pinguintype
 
 ```
-            .___.
-           /     \
-          |  o o  |
-          |   <   |
-           \ '-' /
-            '---'
-           /     \
-          /  .-.  \
-         |  (   )  |
-          \  '-'  /
-           '-----'
-          /       \
-         /  '---'  \
-        /___________\
+   .--.
+  |o_o |
+  |:_/ |
+ //   \ \
+(|     | )
+/'\_   _/`\
+\___)=(___/
+```
+
+```
+  ┌──────┐    ┌──────┐    ┌──────┐
+  │ READ │ →  │ TYPE │ →  │ LEARN│
+  └──────┘    └──────┘    └──────┘
+       ↑                       │
+       └───────────────────────┘
 ```
 
 **Practice English by retyping real sentences.** Read the grammar breakdown, see the Indonesian translation, then type it out. Repetition builds intuition — not speed, not mistakes, just understanding how sentences work.
