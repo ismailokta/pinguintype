@@ -41,6 +41,16 @@ export function TypingArea({
   }, [sentence?.id]);
 
   useEffect(() => {
+    if (sentence) {
+      setTranslationState({
+        sentenceId: sentence.id,
+        toggled: true,
+        completed: false,
+      });
+    }
+  }, [sentence?.id]);
+
+  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Enter" && document.activeElement !== textareaRef.current) {
         event.preventDefault();
