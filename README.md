@@ -46,7 +46,19 @@ npm start
 
 ## LLM API
 
-Uses OpenAI-compatible endpoint at `https://gemma4.emka.web.id/v1/` (no API key required). Change `baseURL` and `model` in `src/lib/llm.ts` for a different provider.
+Configure your own OpenAI-compatible endpoint via environment variables:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable        | Description              | Default                                |
+| --------------- | ------------------------ | -------------------------------------- |
+| `LLM_BASE_URL`  | API base URL             | `https://gemma4.emka.web.id/v1/`       |
+| `LLM_API_KEY`   | API key                  | `not-needed`                           |
+| `LLM_MODEL`     | Model name               | `gemma-3-27b-it`                       |
+
+Works with any OpenAI-compatible provider: OpenAI, Anthropic (via proxy), Groq, local Ollama, etc. Set all three vars and run `npx tsx src/db/seed.ts` to regenerate sentences.
 
 ## Public access (Cloudflare Tunnel)
 

@@ -18,11 +18,11 @@ export type GeneratedSentence = {
 };
 
 const client = new OpenAI({
-  baseURL: "https://gemma4.emka.web.id/v1/",
-  apiKey: "not-needed",
+  baseURL: process.env.LLM_BASE_URL ?? "https://gemma4.emka.web.id/v1/",
+  apiKey: process.env.LLM_API_KEY ?? "not-needed",
 });
 
-let model = "gemma-3-27b-it";
+let model = process.env.LLM_MODEL ?? "gemma-3-27b-it";
 const formalities: Formality[] = ["formal", "informal", "conversational"];
 
 export function buildSentencePrompt(topicName: string) {
