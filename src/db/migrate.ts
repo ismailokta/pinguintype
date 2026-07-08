@@ -20,10 +20,19 @@ sqlite.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     topic_id INTEGER NOT NULL REFERENCES topics(id),
     text TEXT NOT NULL,
+    translation TEXT NOT NULL DEFAULT '',
     formality TEXT NOT NULL,
     metadata TEXT NOT NULL,
     created_at INTEGER NOT NULL DEFAULT (unixepoch() * 1000)
   );
 `);
+
+try {
+  sqlite.exec("ALTER TABLE sentences ADD COLUMN translation TEXT NOT NULL DEFAULT '';");
+} catch (error) {
+  if (!(error instanceof Error) || !error.message.includes("duplicate column")) {
+    throw error;
+  }
+}
 
 console.log("Database migrated successfully");

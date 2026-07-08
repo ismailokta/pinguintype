@@ -12,6 +12,7 @@ export type SentenceMetadata = {
 
 export type GeneratedSentence = {
   text: string;
+  translation: string;
   formality: Formality;
   metadata: SentenceMetadata;
 };
@@ -33,12 +34,14 @@ Requirements:
 - Diverse grammar: simple past, present perfect, past continuous, passive voice, conditionals, modals
 - Sentence length: 8-20 words
 - Natural, authentic English that a learner would encounter in real life
+- Include a natural Indonesian translation for each sentence
 
 Output as JSON:
 {
   "sentences": [
     {
       "text": "The complete English sentence here.",
+      "translation": "Terjemahan bahasa Indonesia di sini.",
       "formality": "formal",
       "metadata": {
         "tense": "present perfect",
@@ -106,6 +109,7 @@ function normalizeSentences(value: unknown): GeneratedSentence[] {
 
     return {
       text: sentence.text,
+      translation: sentence.translation ?? "",
       formality: formalities.includes(sentence.formality as Formality)
         ? (sentence.formality as Formality)
         : formalities[index % formalities.length],

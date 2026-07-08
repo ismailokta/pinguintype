@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Sentence } from "@/lib/types";
 
 type TypingAreaProps = {
@@ -26,6 +26,11 @@ export function TypingArea({
 }: TypingAreaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const completedRef = useRef(false);
+  const [translationState, setTranslationState] = useState({
+    sentenceId: 0,
+    toggled: false,
+    completed: false,
+  });
 
   useEffect(() => {
     textareaRef.current?.focus();
@@ -66,9 +71,16 @@ export function TypingArea({
 
     if (value === sentence?.text && !completedRef.current) {
       completedRef.current = true;
+      setTranslationState({ sentenceId: sentence.id, toggled: false, completed: true });
       window.setTimeout(onComplete, 420);
     }
   }
+
+  const translationVisible =
+    translationState.sentenceId === sentence.id && translationState.toggled;
+  const showTranslation =
+    translationState.sentenceId === sentence.id &&
+    (translationState.toggled || translationState.completed);
 
   return (
     <section
@@ -133,11 +145,35 @@ export function TypingArea({
         />
       </div>
 
+      {showTranslation ? (
+        <div className="mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm italic leading-6 text-emerald-100/70 opacity-100 transition duration-300">
+          <div className="mb-2 text-xs font-semibold not-italic uppercase tracking-[0.2em] text-emerald-300/60">
+            Indonesian
+          </div>
+          {sentence.translation || "No translation available"}
+        </div>
+      ) : null}
+
       <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
         <span>{userInput.length}/{sentence.text.length} chars</span>
-        <span className={correct ? "text-emerald-300" : ""}>
-          {correct ? "complete" : "keep going"}
-        </span>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() =>
+              setTranslationState((current) => ({
+                sentenceId: sentence.id,
+                toggled: current.sentenceId === sentence.id ? !current.toggled : true,
+                completed: current.sentenceId === sentence.id ? current.completed : false,
+              }))
+            }
+            className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-slate-400 transition hover:border-emerald-400/30 hover:text-emerald-200"
+          >
+            {translationVisible ? "Hide translation" : "🇮🇩 Terjemahan"}
+          </button>
+          <span className={correct ? "text-emerald-300" : ""}>
+            {correct ? "complete" : "keep going"}
+          </span>
+        </div>
       </div>
     </section>
   );

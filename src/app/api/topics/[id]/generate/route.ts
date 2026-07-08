@@ -29,6 +29,7 @@ export async function POST(
         generated.map((sentence) => ({
           topicId: topic.id,
           text: sentence.text,
+          translation: sentence.translation,
           formality: sentence.formality,
           metadata: JSON.stringify(sentence.metadata),
         })),
@@ -45,6 +46,7 @@ export async function POST(
       sentences: rows.map((sentence) => ({
         id: sentence.id,
         text: sentence.text,
+        translation: sentence.translation,
         formality: sentence.formality,
         metadata: parseMetadata(sentence.metadata),
       })),

@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/db";
 import { sentences, topics } from "@/db/schema";
-import { parseMetadata } from "@/lib/llm";
+import { generateSentences, parseMetadata } from "@/lib/llm";
 
 export const runtime = "nodejs";
 
-export async function GET(
+export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
@@ -22,11 +22,23 @@ export async function GET(
       return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
 
-    const rows = db
-      .select()
-      .from(sentences)
-      .where(eq(sentences.topicId, id))
-      .all();
+    const generated = await generateSentences(topic.name);
+    const rows = db.transaction((tx) => {
+      tx.delete(sentences).where(eq(sentences.topicId, topic.id)).run();
+      return tx
+        .insert(sentences)
+        .values(
+          generated.map((sentence) => ({
+            topicId: topic.id,
+            text: sentence.text,
+            translation: sentence.translation,
+            formality: sentence.formality,
+            metadata: JSON.stringify(sentence.metadata),
+          })),
+        )
+        .returning()
+        .all();
+    });
 
     return NextResponse.json({
       topic: {
@@ -45,8 +57,8 @@ export async function GET(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to load topic sentences" },
-      { status: 500 },
+      { error: "Failed to regenerate sentences" },
+      { status: 502 },
     );
   }
 }

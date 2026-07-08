@@ -13,6 +13,7 @@ export const sentences = sqliteTable("sentences", {
     .references(() => topics.id)
     .notNull(),
   text: text("text").notNull(),
+  translation: text("translation").notNull().default(""),
   formality: text("formality").notNull(),
   metadata: text("metadata").notNull(),
   createdAt: integer("created_at").$defaultFn(() => Date.now()),

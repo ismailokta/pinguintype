@@ -1,6 +1,7 @@
 export interface Sentence {
   id: number;
   text: string;
+  translation: string;
   formality: "formal" | "informal" | "conversational";
   metadata: {
     tense: string;

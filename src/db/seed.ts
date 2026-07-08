@@ -61,6 +61,7 @@ async function main() {
           generated.map((sentence) => ({
             topicId: topic.id,
             text: sentence.text,
+            translation: sentence.translation,
             formality: sentence.formality,
             metadata: JSON.stringify(sentence.metadata),
           })),

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { Sentence, Topic } from "@/lib/types";
 
 type SidebarProps = {
@@ -93,6 +94,14 @@ export function Sidebar({
           </div>
         )}
       </section>
+
+      <Link
+        href="/admin"
+        className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs text-slate-500 transition hover:border-purple-400/40 hover:text-purple-200 md:mt-auto"
+      >
+        <span>⚙</span>
+        Admin
+      </Link>
     </aside>
   );
 }
