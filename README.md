@@ -1,5 +1,21 @@
 # pinguintype
 
+```
+         __
+       _(  )_
+      (  _  _)
+      (__/ \__)
+        '--'
+
+     .--.
+    |0_0 |
+    |:_/ |        __
+   //   \ \     _(  )_
+  ( |     | )  (  _  _)
+ /'\_   _/`\  (__/ \__)
+ \___)=(___/    '--'
+```
+
 English sentence typing practice — learn grammar by retyping, not random words.
 
 ## What
