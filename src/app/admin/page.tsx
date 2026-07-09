@@ -28,7 +28,7 @@ export default function AdminPage() {
   const [loadingSentencesId, setLoadingSentencesId] = useState<number | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [regeneratingId, setRegeneratingId] = useState<number | null>(null);
-  const [sentenceCount, setSentenceCount] = useState(10);
+  const [sentenceCount, setSentenceCount] = useState<Record<number, number>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -83,19 +83,20 @@ export default function AdminPage() {
     if (isRegenerating) return;
     if (!window.confirm("This will replace all sentences for this topic. Continue?")) return;
 
+    const count = sentenceCount[topicId] ?? 10;
     setIsRegenerating(true);
     setRegeneratingId(topicId);
     setNotice(null);
     setError(null);
 
     try {
-      const response = await fetch(`/api/admin/topics/${topicId}/regenerate?count=${sentenceCount}`, {
+      const response = await fetch(`/api/admin/topics/${topicId}/regenerate?count=${count}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count: sentenceCount }),
+        body: JSON.stringify({ count }),
       });
       if (!response.ok) throw new Error("Could not regenerate sentences.");
-      setNotice(`${sentenceCount} sentences regenerated.`);
+      setNotice(`${count} sentences regenerated.`);
       await Promise.all([loadTopics(), loadSentences(topicId)]);
       setExpandedTopicId(topicId);
     } catch (loadError) {
@@ -122,25 +123,6 @@ export default function AdminPage() {
                 pinguintype Admin
               </h1>
             </div>
-          </div>
-          <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-white/10 pt-5">
-            <label className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.16em] text-slate-500">
-              Sentences to generate
-              <input
-                type="number"
-                min={1}
-                max={50}
-                value={sentenceCount}
-                disabled={isRegenerating}
-                onChange={(event) =>
-                  setSentenceCount(Math.min(50, Math.max(1, Number(event.target.value) || 1)))
-                }
-                className="h-10 w-24 rounded-full border border-white/10 bg-white/[0.04] px-4 font-mono text-sm text-slate-100 outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20 disabled:cursor-wait disabled:opacity-60"
-              />
-            </label>
-            <span className="rounded-full bg-purple-500/10 px-3 py-1 text-xs text-purple-200/70 ring-1 ring-purple-400/20">
-              global
-            </span>
           </div>
         </header>
 
@@ -185,6 +167,23 @@ export default function AdminPage() {
                     >
                       {expandedTopicId === topic.id ? "Hide Sentences" : "View Sentences"}
                     </button>
+                    <label className="grid gap-1 text-xs uppercase tracking-[0.16em] text-slate-500">
+                      Sentences to generate
+                      <input
+                        type="number"
+                        min={1}
+                        max={50}
+                        value={sentenceCount[topic.id] ?? 10}
+                        disabled={isRegenerating}
+                        onChange={(event) =>
+                          setSentenceCount((current) => ({
+                            ...current,
+                            [topic.id]: Math.min(50, Math.max(1, Number(event.target.value) || 1)),
+                          }))
+                        }
+                        className="h-10 w-24 rounded-full border border-white/10 bg-white/[0.04] px-4 font-mono text-sm text-slate-100 outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20 disabled:cursor-wait disabled:opacity-60"
+                      />
+                    </label>
                     <button
                       type="button"
                       onClick={() => void regenerate(topic.id)}
