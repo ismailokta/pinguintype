@@ -20,9 +20,9 @@
 
 ## Screenshots
 
-| Translation | Sidebar & Metadata | Admin Panel |
+| Main Typing | LLM Generated Sentences | Admin Panel |
 | --- | --- | --- |
-| ![Translation](docs/screenshots/translation.png) | ![Sidebar](docs/screenshots/sidebar-metadata.png) | ![Admin](docs/screenshots/admin.png) |
+| ![Main typing](docs/screenshots/main-typing.png) | ![Sentences](docs/screenshots/sentences-llm.png) | ![Admin](docs/screenshots/admin.png) |
 
 ---
 
