@@ -20,13 +20,9 @@
 
 ## Screenshots
 
-| Main | Translation |
-| --- | --- |
-| ![Main typing](docs/screenshots/main-typing.png) | ![Translation](docs/screenshots/translation.png) |
-
-| Sidebar & Metadata | Admin Panel |
-| --- | --- |
-| ![Sidebar](docs/screenshots/sidebar-metadata.png) | ![Admin](docs/screenshots/admin.png) |
+| Translation | Sidebar & Metadata | Admin Panel |
+| --- | --- | --- |
+| ![Translation](docs/screenshots/translation.png) | ![Sidebar](docs/screenshots/sidebar-metadata.png) | ![Admin](docs/screenshots/admin.png) |
 
 ---
 
