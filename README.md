@@ -18,6 +18,16 @@
 
 **Practice English by retyping real sentences.** Read the grammar breakdown, see the Indonesian translation, then type it out. Repetition builds intuition — not speed, not mistakes, just understanding how sentences work.
 
+## Screenshots
+
+| Main | Translation |
+| --- | --- |
+| ![Main typing](docs/screenshots/main-typing.png) | ![Translation](docs/screenshots/translation.png) |
+
+| Sidebar & Metadata | Admin Panel |
+| --- | --- |
+| ![Sidebar](docs/screenshots/sidebar-metadata.png) | ![Admin](docs/screenshots/admin.png) |
+
 ---
 
 ## What
