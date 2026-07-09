@@ -15,6 +15,8 @@
 
 * {
   box-sizing: border-box;
+  scrollbar-color: rgba(124, 58, 237, 0.3) transparent;
+  scrollbar-width: thin;
 }
 
 html {
@@ -32,6 +34,25 @@ body {
 ::selection {
   background: rgba(124, 58, 237, 0.45);
   color: white;
+}
+
+/* Custom scrollbar — dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.5);
 }
 
 @keyframes complete-flash {

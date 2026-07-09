@@ -26,6 +26,34 @@ const starterTopics = [
     name: "Business & Economics",
     description: "Workplace communication, markets, finance, and economic trends.",
   },
+  {
+    name: "Programming & Software",
+    description: "Coding concepts, software development, debugging, and developer tools.",
+  },
+  {
+    name: "Database & Data",
+    description: "SQL queries, data modeling, NoSQL concepts, and data engineering.",
+  },
+  {
+    name: "AI & Machine Learning",
+    description: "Neural networks, training, inference, LLMs, and AI research vocabulary.",
+  },
+  {
+    name: "Education & Learning",
+    description: "Classroom interactions, curriculum design, teaching methods, and academic life.",
+  },
+  {
+    name: "Health & Medicine",
+    description: "Medical terms, patient care, public health, and clinical communication.",
+  },
+  {
+    name: "Environment & Climate",
+    description: "Sustainability, climate change, renewable energy, and environmental policy.",
+  },
+  {
+    name: "Travel & Culture",
+    description: "Transportation, accommodation, cultural experiences, and travel phrases.",
+  },
 ];
 
 async function main() {

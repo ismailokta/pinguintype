@@ -26,7 +26,9 @@ export default function AdminPage() {
   const [sentencesByTopic, setSentencesByTopic] = useState<Record<number, Sentence[]>>({});
   const [loadingTopics, setLoadingTopics] = useState(true);
   const [loadingSentencesId, setLoadingSentencesId] = useState<number | null>(null);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [regeneratingId, setRegeneratingId] = useState<number | null>(null);
+  const [sentenceCount, setSentenceCount] = useState(10);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,27 +80,34 @@ export default function AdminPage() {
   }
 
   async function regenerate(topicId: number) {
+    if (isRegenerating) return;
     if (!window.confirm("This will replace all sentences for this topic. Continue?")) return;
 
+    setIsRegenerating(true);
     setRegeneratingId(topicId);
     setNotice(null);
     setError(null);
 
     try {
-      const response = await fetch(`/api/admin/topics/${topicId}/regenerate`, { method: "POST" });
+      const response = await fetch(`/api/admin/topics/${topicId}/regenerate?count=${sentenceCount}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ count: sentenceCount }),
+      });
       if (!response.ok) throw new Error("Could not regenerate sentences.");
-      setNotice("Sentences regenerated.");
+      setNotice(`${sentenceCount} sentences regenerated.`);
       await Promise.all([loadTopics(), loadSentences(topicId)]);
       setExpandedTopicId(topicId);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Could not regenerate sentences.");
     } finally {
+      setIsRegenerating(false);
       setRegeneratingId(null);
     }
   }
 
   return (
-    <main className="min-h-screen overflow-y-auto bg-[#0f0f1a] px-4 py-5 text-slate-200 md:px-8 md:py-8">
+    <main className="h-screen overflow-y-auto overscroll-contain bg-[#0f0f1a] px-4 py-5 text-slate-200 md:px-8 md:py-8">
       <div className="mx-auto max-w-7xl">
         <header className="mb-6 rounded-[2rem] border border-white/10 bg-white/[0.03] p-5 shadow-2xl shadow-black/20 backdrop-blur-xl md:p-7">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -149,7 +158,7 @@ export default function AdminPage() {
                     <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{topic.description}</p>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap items-end gap-2">
                     <button
                       type="button"
                       onClick={() => void toggleSentences(topic.id)}
@@ -157,10 +166,25 @@ export default function AdminPage() {
                     >
                       {expandedTopicId === topic.id ? "Hide Sentences" : "View Sentences"}
                     </button>
+                    <label className="grid gap-1 text-xs uppercase tracking-[0.16em] text-slate-500">
+                      Sentences to generate
+                      <input
+                        type="number"
+                        min={1}
+                        max={50}
+                        value={sentenceCount}
+                        disabled={isRegenerating}
+                        onChange={(event) =>
+                          setSentenceCount(Math.min(50, Math.max(1, Number(event.target.value) || 1)))
+                        }
+                        className="h-10 w-24 rounded-full border border-white/10 bg-white/[0.04] px-4 font-mono text-sm text-slate-100 outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20 disabled:cursor-wait disabled:opacity-60"
+                      />
+                    </label>
                     <button
                       type="button"
                       onClick={() => void regenerate(topic.id)}
-                      disabled={regeneratingId === topic.id}
+                      disabled={isRegenerating}
+                      title={isRegenerating && regeneratingId !== topic.id ? "Another topic is regenerating..." : undefined}
                       className="rounded-full border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-500/20 disabled:cursor-wait disabled:opacity-60"
                     >
                       {regeneratingId === topic.id ? "Regenerating..." : "Regenerate"}

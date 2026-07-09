@@ -107,7 +107,7 @@ export default function Home() {
     if (!currentSentence) return;
 
     setCompletedId(currentSentence.id);
-    const nextIndex = Math.min(selectedSentenceIndex + 1, sentences.length - 1);
+    const nextIndex = (selectedSentenceIndex + 1) % sentences.length;
 
     window.setTimeout(() => {
       setUserInput("");

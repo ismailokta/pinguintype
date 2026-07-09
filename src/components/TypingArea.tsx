@@ -40,14 +40,11 @@ export function TypingArea({
     completedRef.current = false;
   }, [sentence?.id]);
 
+  // Show translation by default when sentence changes
   useEffect(() => {
-    if (sentence) {
-      setTranslationState({
-        sentenceId: sentence.id,
-        toggled: true,
-        completed: false,
-      });
-    }
+    if (!sentence) return;
+    setTranslationState({ sentenceId: sentence.id, toggled: true, completed: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sentence?.id]);
 
   useEffect(() => {

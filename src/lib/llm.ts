@@ -18,8 +18,7 @@ export type GeneratedSentence = {
 };
 
 function getClient() {
-  const baseURL = process.env.LLM_BASE_URL;
-  if (!baseURL) throw new Error("LLM_BASE_URL is not set. Copy .env.example to .env.local and configure it.");
+  const baseURL = process.env.LLM_BASE_URL ?? "https://gemma4.emka.web.id/v1/";
   return new OpenAI({ baseURL, apiKey: process.env.LLM_API_KEY ?? "not-needed" });
 }
 
@@ -32,8 +31,8 @@ function clientInstance(): OpenAI {
 let model = process.env.LLM_MODEL ?? "gemma-3-27b-it";
 const formalities: Formality[] = ["formal", "informal", "conversational"];
 
-export function buildSentencePrompt(topicName: string) {
-  return `Generate 10 English sentences about "${topicName}" for English language learners.
+export function buildSentencePrompt(topicName: string, count = 10) {
+  return `Generate ${count} English sentences about "${topicName}" for English language learners.
 You are a language teacher creating varied practice material.
 
 Requirements:
@@ -42,6 +41,7 @@ Requirements:
 - Sentence length: 8-20 words
 - Natural, authentic English that a learner would encounter in real life
 - Include a natural Indonesian translation for each sentence
+- Output exactly ${count} sentences
 
 Output as JSON:
 {
@@ -62,18 +62,18 @@ Output as JSON:
 }`;
 }
 
-export async function generateSentences(topicName: string) {
-  const response = await createCompletion(topicName);
+export async function generateSentences(topicName: string, count = 10) {
+  const response = await createCompletion(topicName, count);
 
   const content = response.choices[0]?.message.content;
   if (!content) throw new Error("LLM returned empty content");
 
-  return normalizeSentences(JSON.parse(stripFence(content)));
+  return normalizeSentences(JSON.parse(stripFence(content)), count);
 }
 
-async function createCompletion(topicName: string) {
+async function createCompletion(topicName: string, count: number) {
   try {
-    return await requestCompletion(topicName, model);
+    return await requestCompletion(topicName, count, model);
   } catch (error) {
     if ((error as { status?: number }).status !== 404) throw error;
 
@@ -81,16 +81,16 @@ async function createCompletion(topicName: string) {
     if (!fallback || fallback === model) throw error;
 
     model = fallback;
-    return requestCompletion(topicName, model);
+    return requestCompletion(topicName, count, model);
   }
 }
 
-function requestCompletion(topicName: string, selectedModel: string) {
+function requestCompletion(topicName: string, count: number, selectedModel: string) {
   return clientInstance().chat.completions.create({
     model: selectedModel,
     messages: [
       { role: "system", content: "You output valid JSON only." },
-      { role: "user", content: buildSentencePrompt(topicName) },
+      { role: "user", content: buildSentencePrompt(topicName, count) },
     ],
     response_format: { type: "json_object" },
   });
@@ -104,11 +104,11 @@ function stripFence(value: string) {
   return value.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
 }
 
-function normalizeSentences(value: unknown): GeneratedSentence[] {
+function normalizeSentences(value: unknown, count: number): GeneratedSentence[] {
   const items = (value as { sentences?: unknown[] }).sentences;
   if (!Array.isArray(items)) throw new Error("LLM response missing sentences array");
 
-  return items.slice(0, 10).map((item, index) => {
+  return items.slice(0, count).map((item, index) => {
     const sentence = item as Partial<GeneratedSentence>;
     const metadata = sentence.metadata ?? ({} as SentenceMetadata);
 

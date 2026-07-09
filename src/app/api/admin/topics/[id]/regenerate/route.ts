@@ -8,7 +8,7 @@ import { generateSentences, parseMetadata } from "@/lib/llm";
 export const runtime = "nodejs";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -22,7 +22,10 @@ export async function POST(
       return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
 
-    const generated = await generateSentences(topic.name);
+    const count = await getCount(request);
+    const generated = await generateSentences(topic.name, count);
+    if (generated.length === 0) throw new Error("LLM returned no sentences");
+
     const rows = db.transaction((tx) => {
       tx.delete(sentences).where(eq(sentences.topicId, topic.id)).run();
       return tx
@@ -61,4 +64,14 @@ export async function POST(
       { status: 502 },
     );
   }
+}
+
+async function getCount(request: Request) {
+  const queryCount = new URL(request.url).searchParams.get("count");
+  const body = (await request.json().catch(() => ({}))) as { count?: unknown };
+  const raw = queryCount ?? body.count;
+  const count = Number(raw ?? 10);
+
+  if (!Number.isFinite(count)) return 10;
+  return Math.min(50, Math.max(1, Math.trunc(count)));
 }
